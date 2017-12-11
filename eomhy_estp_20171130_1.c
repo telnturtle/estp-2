@@ -102,22 +102,6 @@ JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_NativeSum (JNIEnv* en
         // buzzer ioctl에서 보조 인자는 아무 값이나 (0) 넣어
         ioctl(dev_buzzer, 0, 0); 
         // ioctl(dev_segment, <cmd>, <잘 가공한 정수값>);
-        
-        // 
-        // 이 부분은 jni에서 Buzzer on/off 로직을 담당했을 때의 코드
-        // 지금은 D/D에서 로직을 돌림
-        // 
-        // write(dev_buzzer, &BUZZER_ON, 1);
-        // sleep(1);
-        // write(dev_buzzer, &BUZZER_OFF, 1);
-        // sleep(1);
-        // write(dev_buzzer, &BUZZER_ON, 1);
-        // sleep(1);
-        // write(dev_buzzer, &BUZZER_OFF, 1);
-        // sleep(1);
-        // write(dev_buzzer, &BUZZER_ON, 1);
-        // sleep(1);
-        // write(dev_buzzer, &BUZZER_OFF, 1);
     }
 
     // 덧셈이 틀린 경우
@@ -130,9 +114,7 @@ JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_NativeSum (JNIEnv* en
         // Buzzer 활성화
         // Buzzer의 경우 “삐”음이 주기적으로 On/Off되어야 함
         // 3초 on 후 계속 off
-        write(dev_buzzer, &BUZZER_ON, 1);
-        sleep(3);
-        write(dev_buzzer, &BUZZER_OFF, 1);
+        ioctl(dev_buzzer, 1, 0); 
     }
 
     // 디바이스 닫기
