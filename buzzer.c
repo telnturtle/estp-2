@@ -3,7 +3,7 @@
  *  Hanback Electronics Co.,ltd
  * File : buzzer.c
  * Date : April,2009
- * Modify: 2017-12-04, Eom Hwiyong, 컴파일 전 버전. 
+ * Modify: 2017-12-04, Eom Hwiyong, 테스트 전 버전
  */
 
 // 모듈의 헤더파일 선언

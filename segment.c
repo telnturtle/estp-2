@@ -38,9 +38,17 @@
 
 //Global variable
 static unsigned int segment_usage = 0;
-static unsigned long *segment_data;
-static unsigned long *segment_grid;
+static unsigned long *segment_data; // .... .... 0000 0000
+static unsigned long *segment_grid; // .... .... ..00 0000
 static int mode_select = 0x0;
+
+// Constants for SEG_Data_Reg of 7-seg 
+const unsigned short SEG_N_DASH = 0x2; // - (n-dash) of SEG_Data_Reg
+const unsigned short SEG_TOP = 0x80; // top - (moving) of SEG_Data_Reg
+const unsigned short SEG_LEFT = 0x0c; // left | (moving) of SEG_Data_Reg
+const unsigned short SEG_BOTTOM = 0x10; // bottom - (moving) of SEG_Data_Reg
+const unsigned short SEG_RIGHT = 0x60; // right | (moving) of SEG_Data_Reg
+
 
 // define functions...
 // 응용 프로그램에서 디바이스를 처음 사용하는 경우를 처리하는 함수
@@ -103,7 +111,9 @@ unsigned short Getsegmentcode (short x)
         case 0xd : code = 0x7a; break;						
         case 0xe : code = 0x9e; break;
         case 0xf : code = 0x8e; break;			
+        
         case 0x10: code = 0x2;  break; // - (n-dash)
+        
         default : code = 0; break;
     }
     return code;
@@ -165,8 +175,8 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
     // t = 0부터 t = 5까지 변화
 
     unsigned char data[6];
-    unsigned char digit[6]={0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
-    unsigned int i,num,ret;
+    unsigned char digit[6]={0x20, 0x10, 0x08, 0x04, 0x02, 0x01}; // sel (grid) 1 -> digit[0] (1 is left sel)
+    unsigned int i,j,num,ret;
     unsigned int count=0,temp1,temp2;
     
     switch(cmd) {
@@ -177,6 +187,7 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
         mode_select=0x01;
         break;
     
+
     case 2: // 덧셈이 정확한 경우
         num = arg;
         count = num;
@@ -204,13 +215,16 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 0일 때 끝
-            ssleep(1);
+            // ssleep(1);
             // t = 1
             data[5] = data[4];
             data[4] = data[3];
@@ -229,13 +243,16 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 1일 때 끝
-            ssleep(1);
+            // ssleep(1);
             // t = 2
             data[5] = data[4];
             data[4] = data[3];
@@ -254,13 +271,16 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 2일 때 끝
-            ssleep(1);
+            // ssleep(1);
             // t = 3
             data[5] = data[4];
             data[4] = data[3];
@@ -279,13 +299,16 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 3일 때 끝
-            ssleep(1);
+            // ssleep(1);
             // t = 4
             data[5] = data[4];
             data[4] = data[3];
@@ -304,13 +327,16 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 4일 때 끝
-            ssleep(1);
+            // ssleep(1);
             // t = 5
             data[5] = data[4];
             data[4] = data[3];
@@ -329,19 +355,23 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 5일 때 끝
-            ssleep(1);
+            // ssleep(1);
         }
 
         *segment_grid = ~digit[0]; // 근데 이 두 줄은 왜 있는거지
         *segment_data = 0;         // write 함수에 있길래 가져왔지만... 모르겠다
         break;
     
+
     case 3: // 덧셈이 틀린 경우    
         num = arg;
         count = num;
@@ -367,10 +397,13 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 0일 때 끝
             ssleep(1);
@@ -392,10 +425,13 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j = 0; j < 150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 1일 때 끝
             ssleep(1);
@@ -417,10 +453,13 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j=0; j<150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 2일 때 끝
             ssleep(1);
@@ -442,10 +481,13 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j=0; j<150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 3일 때 끝
             ssleep(1);
@@ -467,10 +509,13 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j=0; j<150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 4일 때 끝
             ssleep(1);
@@ -492,10 +537,13 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
                 break;
             }
             // print
-            for(i=0;i<6;i++) {
-                *segment_grid = digit[i];
-                *segment_data = data[i];
-                mdelay(1);	
+            for (j=0; j<150; j++)
+            {
+                for(i=0;i<6;i++) {
+                    *segment_grid = digit[i];
+                    *segment_data = data[i];
+                    mdelay(1);	
+                }
             }
             // t = 5일 때 끝
             ssleep(1);
@@ -504,6 +552,66 @@ static int segment_ioctl(struct inode *inode, struct file *flip, unsigned int cm
         *segment_grid = ~digit[0]; // 근데 이 두 줄은 왜 있는거지
         *segment_data = 0;         // write 함수에 있길래 가져왔지만... 모르겠다
         break;
+
+
+    case 4: // 대기 상태 빙글 빙글
+        // 
+        // print
+        // 
+        // TOP
+        for (j=5; j>=0; j--)
+        {
+            data[0]=0; data[1]=0; data[2]=0; data[3]=0; data[4]=0; data[5]=0;
+            data[j]=SEG_TOP;
+            for(i=0;i<6;i++)
+            {
+                *segment_grid = digit[i];
+                *segment_data = data[i];
+                mdelay(1);	
+            }
+            mdelay(100);
+        }
+        
+        // LEFT
+        data[0]=0; data[1]=0; data[2]=0; data[3]=0; data[4]=0; data[5]=0;
+        data[0]=SEG_LEFT;
+        for(i=0;i<6;i++)
+        {
+            *segment_grid = digit[i];
+            *segment_data = data[i];
+            mdelay(1);	
+        }
+        mdelay(100);
+        
+        // BOTTOM
+        for (j=0; j<6; j++)
+        {
+            data[0]=0; data[1]=0; data[2]=0; data[3]=0; data[4]=0; data[5]=0;
+            data[j]=SEG_BOTTOM;
+            for(i=0;i<6;i++)
+            {
+                *segment_grid = digit[i];
+                *segment_data = data[i];
+                mdelay(1);	
+            }
+            mdelay(100);
+        }
+
+        // RIGHT
+        data[0]=0; data[1]=0; data[2]=0; data[3]=0; data[4]=0; data[5]=0;
+        data[5]=SEG_RIGHT;
+        for(i=0;i<6;i++)
+        {
+            *segment_grid = digit[i];
+            *segment_data = data[i];
+            mdelay(1);	
+        }
+        mdelay(100);
+
+        *segment_grid = ~digit[0]; // 근데 이 두 줄은 왜 있는거지
+        *segment_data = 0;         // write 함수에 있길래 가져왔지만... 모르겠다
+        break;
+    
     default:
         return -EINVAL;
     }
