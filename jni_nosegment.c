@@ -13,9 +13,7 @@
 
 #include <linux/kernel.h> // printk()
 
-// 
-// eomhy
-// 
+
 JNIEXPORT void JNICALL Java_ac_kr_kgu_esproject_ArrayAdderActivity_NativeSum (JNIEnv* env,
                                     jobject thiz, jintArray jarray, jint jsum)
 {
@@ -23,7 +21,6 @@ JNIEXPORT void JNICALL Java_ac_kr_kgu_esproject_ArrayAdderActivity_NativeSum (JN
     int BUZZER_ON = 1;
     int BUZZER_OFF = 0;
 
-    
     // 배열의 합계를 구한다
     int i, sum = 0;
     jsize len = (*env)->GetArrayLength(env, jarray);
@@ -40,20 +37,20 @@ JNIEXPORT void JNICALL Java_ac_kr_kgu_esproject_ArrayAdderActivity_NativeSum (JN
     // 디바이스 열기
     int dev_buzzer, dev_segment, ret ;
     dev_buzzer = open("/dev/buzzer",O_WRONLY);
-    /*dev_segment = open("/dev/segment",O_RDWR | O_SYNC);*/
+    dev_segment = open("/dev/segment",O_RDWR | O_SYNC);
     
     // 디바이스를 열지 못했을 경우
-/*
     if ( dev_segment == -1 || dev_buzzer < 0 )
     {
         if (dev_segment == -1)
         {
             // 세그먼트 디바이스를 열지 못하면 로그를 출력
             printk("Segment Device Open Error\n");
+            __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Segment Device Open ERROR!\n");
         }
         if (dev_buzzer < 0)
         {
-            // __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Buzzer Device Open ERROR!\n");
+            __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Buzzer Device Open ERROR!\n");
             printk("Buzzer Device Open ERROR!\n");
         }
         close(dev_segment);
@@ -61,70 +58,36 @@ JNIEXPORT void JNICALL Java_ac_kr_kgu_esproject_ArrayAdderActivity_NativeSum (JN
         // 프로그램 종료
         exit(1);
     }
-*/
-    if (dev_buzzer < 0)
-    {
-        close(dev_buzzer);
-        exit(1);
-    }
 
     // 디바이스를 성공적으로 열었을 경우
     // 덧셈이 정확한 경우
     if (is_correct)
     {
-        // 7-Segment에 덧셈 결과값 출력
-        // 처리 루틴은 나중에 작성하고 일단 buzzer부터 만듦
-        
         // Buzzer 활성화
         // Buzzer의 경우 “삐”음이 주기적으로 On/Off되어야 함
         // 두 번 켜졌다 꺼지고 Buzzer 작동 끝난다고 임의로 설정
         // 1초 on, 1초 off, 1초 on, 1초 off, 1초 on, 계속 off
         
         // ioctl(dev_segment, <cmd>, <잘 가공한 정수값>);
-/*
-        ioctl(dev_segment, 2, sum);
-    */
-        // ioctl 인자 순서
-        // 파일 디스크립터, 커맨드, 보조 인자, ...
-        // buzzer cmd 0: 맞음, 1: 틀림
-        // buzzer ioctl에서 보조 인자는 아무 값이나 (0) 넣어
-        //
-        // BANNER //////////////////////////////////////////////
-        //
-        // orig
-            //ioctl(dev_buzzer, 0, 0); 
-        // alt
-            write(dev_buzzer, &BUZZER_ON, 1);
-            sleep(1);
-            write(dev_buzzer, &BUZZER_OFF, 1);
-            sleep(1);
-            write(dev_buzzer, &BUZZER_ON, 1);
-            sleep(1);
-            write(dev_buzzer, &BUZZER_OFF, 1);
-            sleep(1);
-            write(dev_buzzer, &BUZZER_ON, 1);
-            sleep(1);
-            write(dev_buzzer, &BUZZER_OFF, 1);
-    }
 
+        ioctl(dev_segment, 2, sum);
+        // ioctl 인자 순서: 파일 디스크립터, 커맨드, 보조 인자, ...
+        // buzzer cmd 0: 맞음, 1: 틀림
+        // buzzer ioctl에서 보조 인자는 아무 값이나 (0 넣음)
+        ioctl(dev_buzzer, 0, 0); 
+    }
     // 덧셈이 틀린 경우
     else 
     {
-        // 7-segment에 사용자 입력 값, 덧셈 결과값 출력
-        // 
-        // (처리 루틴은 나중에 작성하고 일단 buzzer부터 만듦)
-        
         // Buzzer 활성화
         // Buzzer의 경우 “삐”음이 주기적으로 On/Off되어야 함
         // 3초 on 후 계속 off
         ioctl(dev_buzzer, 1, 0); 
-        /*
         ioctl(dev_segment, 3, jsum*100+sum);
-        */
     }
 
     // 디바이스 닫기
-    /*close(dev_segment);*/
+    close(dev_segment);
     close(dev_buzzer);
 }
 
@@ -145,11 +108,11 @@ JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_Clear (JNIEnv* env,
         if (dev_segment == -1)
         {
             // 세그먼트 디바이스를 열지 못하면 로그를 출력
-            // __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Segment Device Open ERROR!\n");
+            __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Segment Device Open ERROR!\n");
         }
         if (dev_buzzer < 0)
         {
-            // __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Buzzer Device Open ERROR!\n");
+            __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Buzzer Device Open ERROR!\n");
         }
         close(dev_segment);
         close(dev_buzzer);
@@ -170,42 +133,6 @@ JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_Clear (JNIEnv* env,
 }
 
 
-
-
-
-
-
-/*
-// D/D 테스트하는 jni 함수
-JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_DDTest (JNIEnv* env,
-                                    jobject thiz, jint cmd)
-{
-    // Buzzer의 레지스터에 쓰는 값
-    int BUZZER_ON = 1;
-    int BUZZER_OFF = 0;
-
-    // 디바이스 열기
-    int dev_buzzer, dev_segment, ret ;
-    dev_buzzer = open("/dev/buzzer",O_WRONLY);
-
-    // 
-    if (dev_buzzer < 0)
-    {
-        // __android_log_print(ANDROID_LOG_ERROR, "ArrayAdderActivity", "Buzzer Device Open ERROR!\n");
-        close(dev_buzzer);
-        exit(1);
-    }
-
-    ioctl(dev_buzzer, 0, 0); 
-    sleep(7);
-    ioctl(dev_buzzer, 1, 0);
-
-    // 디바이스 닫기
-    close(dev_buzzer);
-}
-*/
-
-
 /*JNIEXPORT */void /*JNICALL*/ Java_ac_kr_kgu_esproject_ArrayAdderActivity_TestBuzzerControl (JNIEnv* env,
     jobject thiz, jint value)
 {
@@ -224,6 +151,7 @@ JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_DDTest (JNIEnv* env,
     return -1;
 }
 
+
 /*JNIEXPORT */void /*JNICALL*/ Java_ac_kr_kgu_esproject_ArrayAdderActivity_TestSegControl (JNIEnv* env,
     jobject thiz, jint data )
 {
@@ -241,72 +169,3 @@ JNIEXPORT void Java_ac_kr_kgu_esproject_ArrayAdderActivity_DDTest (JNIEnv* env,
     }
     return 0;
 }
-
-
-
-
-
-
-
-/* // 부저 테스트 중엔 사용하지 않는다
-jint
-Java_com_hanback_segment_SegmentActivity_SegmentIOControl (JNIEnv* env,
-                                                    jobject thiz, jint data )
-{
-    int dev, ret ;
-    dev = open("/dev/segment",O_RDWR | O_SYNC);
-
-    if(dev != -1) {
-        ret = ioctl(dev, data, NULL, NULL);
-        close(dev);
-    } else {
-        __android_log_print(ANDROID_LOG_ERROR, "SegmentActivity", "Device Open ERROR!\n");
-        exit(1);
-    }
-    return 0;
-}
-*/
-
-
-
-
-
-// 
-// orignal 7segment.c 함수 내용
-// 
-/*
-jint
-Java_com_hanback_segment_SegmentActivity_SegmentControl (JNIEnv* env,
-                                                    jobject thiz, jint data )
-{	
-    int dev, ret ;
-    dev = open("/dev/segment",O_RDWR | O_SYNC);
-
-    if(dev != -1) {
-        ret = write(dev,&data,4);
-        close(dev);
-    } else {
-        // 디바이스를 열지 못하면 로그를 출력하고 프로그램 종료
-        __android_log_print(ANDROID_LOG_ERROR, "SegmentActivity", "Device Open ERROR!\n");
-        exit(1);
-    }
-    return 0;
-}
-
-jint
-Java_com_hanback_segment_SegmentActivity_SegmentIOControl (JNIEnv* env,
-                                                    jobject thiz, jint data )
-{
-    int dev, ret ;
-    dev = open("/dev/segment",O_RDWR | O_SYNC);
-
-    if(dev != -1) {
-        ret = ioctl(dev, data, NULL, NULL);
-        close(dev);
-    } else {
-        __android_log_print(ANDROID_LOG_ERROR, "SegmentActivity", "Device Open ERROR!\n");
-        exit(1);
-    }
-    return 0;
-}
-*/

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout android:id="@+id/widget0"
+   android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+   <TextView android:layout_height="30px" android:layout_width="110px" android:textSize="16sp" android:text="배열 개수" android:id="@+id/textView1" android:layout_x="2dip" android:layout_y="22dip"></TextView>
+   <Spinner android:id="@+id/Spinner" android:layout_height="40px" android:layout_width="100px" android:layout_x="88dip" android:layout_y="18dip"></Spinner>
+   <Button android:layout_height="50px" android:layout_width="80px" android:id="@+id/ArrCreate" android:isScrollContainer="true" android:text="Arr Create" android:textSize="10sp" android:layout_x="218dip" android:layout_y="14dip"></Button>
+   <TextView android:layout_height="120px" android:layout_width="230px" android:textSize="18sp" android:id="@+id/ArrayValue" android:layout_x="4dip" android:layout_y="81dip"></TextView>
+   <TextView android:layout_height="30px" android:layout_width="120px" android:textSize="22sp" android:text="Add Result :" android:id="@+id/AddResult" android:layout_x="1dip" android:layout_y="250dip"></TextView>
+   <EditText android:layout_height="50px" android:id="@+id/input" android:layout_width="120px" android:textSize="10sp" android:layout_x="156dip" android:layout_y="249dip"></EditText>
+   <Button android:layout_height="40px" android:layout_width="120px" android:id="@+id/OK" android:text="OK" android:textSize="15sp" android:layout_x="9dip" android:layout_y="317dip"></Button>
+   <Button android:layout_height="40px" android:layout_width="120px" android:id="@+id/Clear" android:text="Clear" android:textSize="15sp" android:layout_x="162dip" android:layout_y="314dip"></Button>
+   <TextView android:layout_height="35px" android:textSize="10sp" android:id="@+id/ResultValue" android:layout_width="230px" android:layout_x="1dip" android:layout_y="280dip"></TextView>
+</AbsoluteLayout>

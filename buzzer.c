@@ -3,7 +3,7 @@
  *  Hanback Electronics Co.,ltd
  * File : buzzer.c
  * Date : April,2009
- * Modify: 2017-12-04, Eom Hwiyong, 테스트 전 버전
+ * Modify: 2017-12-04, Eom Hwiyong
  */
 
 // 모듈의 헤더파일 선언
@@ -16,7 +16,7 @@
 #include <asm/uaccess.h>
 
 #include <linux/delay.h>
-#include <linux/timer.h>//  msleep()    ssleep()
+#include <linux/timer.h> //  msleep()    ssleep()
 
 #define DRIVER_AUTHOR           "hanback"               // 모듈의 저작자
 #define DRIVER_DESC             "buzzer test program"   // 모듈에 대한 설명
@@ -27,11 +27,11 @@
 #define BUZZER_ADDRESS          0x88000050              // buzzer의 물리 주소
 #define BUZZER_ADDRESS_RANGE    0x1000                  // I/O 영역의 크기
 
-//Global variable
+// Global variable
 static int buzzer_usage = 0;            // 드라이버 사용여부를 확인하는 값
 static unsigned long *buzzer_ioremap;   // IO 주소 공간 저장
 
-// define functions...
+// Functions
 // 응용 프로그램에서 디바이스를 처음 사용하는 경우를 처리하는 함수
 int buzzer_open(struct inode *minode, struct file *mfile)
 {
@@ -80,7 +80,7 @@ ssize_t buzzer_write_byte(struct file *inode, const char *gdata, size_t length, 
     return length;
 }
 
-// 
+// ioctl
 int buzzer_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg)
 {
     // 인자들에서 arg는 의미없음. 아무 값이나 넣어도 됨
@@ -94,7 +94,7 @@ int buzzer_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsi
     case 0 : // 덧셈이 정확한 경우
         // Buzzer 활성화
         // Buzzer의 경우 “삐”음이 주기적으로 On/Off되어야 함
-        // 두 번 켜졌다 꺼지고 Buzzer 작동 끝난다고 임의로 설정
+        // 세 번 켜졌다 꺼지고 Buzzer 작동 끝난다고 임의로 설정
         // 1초 on, 1초 off, 1초 on, 1초 off, 1초 on, 계속 off
         // 구현법: buzzer_write_byte 함수 내용 복사해 활용
         addr = (unsigned char *)(buzzer_ioremap);
@@ -109,11 +109,10 @@ int buzzer_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsi
         *addr = BUZZER_ON;
         ssleep(1);
         *addr = BUZZER_OFF;
-        // 마지막 sleep은 필요하지 않다
         break;
     case 1 : // 덧셈이 틀린 경우
         // Buzzer 활성화
-        // Buzzer의 경우 “삐”음이 주기적으로 On/Off되어야 함
+        // Buzzer의 경우 “삐”음이 연속적으로 발생되어야 함
         // 3초 on 후 계속 off -> 라고 임의로 설정
         // 구현법: buzzer_write_byte 함수 내용 복사해 활용
         addr = (unsigned char *)(buzzer_ioremap);
@@ -122,7 +121,7 @@ int buzzer_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsi
         *addr = BUZZER_OFF;
         break;
     }
-    return 0; // TODO: return what??
+    return 0;
 }
 
 
