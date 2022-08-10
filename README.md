@@ -5,6 +5,8 @@
 - Android application - other
 - JNI and device driver - me
 
+See term_project_2.pdf to get project outline.
+
 ## logs
 
 ### 2017-11
